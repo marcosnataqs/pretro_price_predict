@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "petro-price-predict"
+version = "0.1.0"
+description = "Petrobras Price Prediction"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+joblib = "^1.4.2"
+numpy = "^2.1.1"
+litserve = "^0.2.2"
+streamlit = "^1.38.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
