@@ -14,11 +14,13 @@ class PetroDataset(Dataset):
 
     def __init__(self, 
                  data: pd.DataFrame, 
-                 num_features:int, 
                  pipeline_params: dict) -> None:
+        """
+            This initialize the Dataset class, important to notice that num_features param must NOT consider the index. 
+        """
         self.pipeline_params = pipeline_params
         self.data = data
-        self.num_features = num_features
+        self.num_features = self.pipeline_params['num_features']
         self.transform_data_pipeline()
     
     def transform_data_pipeline(self):
@@ -58,7 +60,7 @@ class PetroDataset(Dataset):
         """
         X = np.flip(self.data_scaled[:, 1:], axis=1)
         y = self.data_scaled[:, 0]
-        self.X = X.reshape((-1, (self.num_features-1), 1))
+        self.X = X.reshape((-1, (self.num_features), 1))
         self.y = y.reshape((-1, 1))
         print(self.X.shape, self.y.shape)
         print(type(self.X), type(self.y))
@@ -87,7 +89,7 @@ if __name__ == '__main__':
     params = {
         'num_lags':3,
         'columns': ['pbr', 'usd'],
-        'num_features': 6
+        'num_features': 5
     }
     petrodata = PetroDataset(data, target, 6, pipeline_params=params)
     data, target = petrodata[1]
