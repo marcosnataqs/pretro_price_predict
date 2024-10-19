@@ -86,10 +86,9 @@ class PetroDataset(Dataset):
 
 if __name__ == "__main__":
     data = pd.read_csv(
-        "ml_model_training\petro.csv", index_col=0, parse_dates=True
+        os.path.join("ml_model_training", "petro.csv"), index_col=0, parse_dates=True
     ).sort_index()
-    target = "pbr"
-    params = {"num_lags": 3, "columns": ["pbr", "usd"], "num_features": 5}
-    petrodata = PetroDataset(data, target, 6, pipeline_params=params)
+    params = {"num_lags": 7, "columns": ["pbr", "usd"], "num_features": 5}
+    petrodata = PetroDataset(data, pipeline_params=params)
     data, target = petrodata[1]
     print(data, target)

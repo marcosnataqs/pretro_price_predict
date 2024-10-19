@@ -126,7 +126,7 @@ if __name__ == "__main__":
     batch_size = 16
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-    model = PetroModel(1, 4, 1, device).to(device)
+    model = PetroModel(1, 7, 1, device).to(device)
     learning_rate = 0.001
     num_epochs = 10
     loss_function = nn.MSELoss()
