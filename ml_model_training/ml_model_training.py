@@ -1,9 +1,10 @@
 import pandas as pd
 import torch
 import torch.nn as nn
+import matplotlib.pyplot as plt
+
 from torch.autograd import Variable
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-import matplotlib.pyplot as plt
 
 # %%
 

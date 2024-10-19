@@ -1,14 +1,23 @@
+import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import pandas as pd
+
 from torch.utils.data import DataLoader
 from petro_dataset import PetroDataset
 from petro_model import PetroModel
 from sklearn.model_selection import train_test_split
 
 
-def train_one_epoch(epoch, train_loader, model, loss_function, optimizer, device):
+def train_one_epoch(
+    epoch: int,
+    train_loader: DataLoader,
+    model: PetroModel,
+    loss_function: nn.MSELoss,
+    optimizer: optim.Adam,
+    device: str,
+) -> None:
     model.train(True)
     print(f"Epoch: {epoch+1}")
     running_loss = 0.0
@@ -27,10 +36,11 @@ def train_one_epoch(epoch, train_loader, model, loss_function, optimizer, device
             running_loss = 0.0
     print()
 
-    ## TO-DO: We need to review this part if we are going to test with batches or always the same data
 
-
-def validate_one_epoch(model, test_loader, device, loss_function):
+# TO-DO: We need to review this part if we are going to test with batches or always the same data
+def validate_one_epoch(
+    model: PetroModel, test_loader: DataLoader, device: str, loss_function: nn.MSELoss
+) -> None:
     model.train(False)
     running_loss = 0.0
 
@@ -49,8 +59,14 @@ def validate_one_epoch(model, test_loader, device, loss_function):
 
 
 def main(
-    num_epochs, train_loader, test_loader, model, loss_function, optimizer, device
-):
+    num_epochs: int,
+    train_loader: DataLoader,
+    test_loader: DataLoader,
+    model: PetroModel,
+    loss_function: nn.MSELoss,
+    optimizer: optim.Adam,
+    device: str,
+) -> None:
     for epoch in range(num_epochs):
         train_one_epoch(epoch, train_loader, model, loss_function, optimizer, device)
         # validate_one_epoch(epoch, model, test_loader, device, loss_function)
@@ -58,7 +74,7 @@ def main(
 
 if __name__ == "__main__":
     data = pd.read_csv(
-        "ml_model_training\petro.csv", index_col=0, parse_dates=True
+        os.path.join("ml_model_training", "petro.csv"), index_col=0, parse_dates=True
     ).sort_index()
     pipeline_params = {"num_lags": 7, "columns": ["pbr", "usd"], "num_features": 5}
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -73,4 +89,6 @@ if __name__ == "__main__":
     num_epochs = 10
     loss_function = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-    main(num_epochs, train_loader, test_loader, model, loss_function, optimizer, device)
+    main(
+        num_epochs, train_loader, test_loader, model, loss_function, optimizer, device
+    )

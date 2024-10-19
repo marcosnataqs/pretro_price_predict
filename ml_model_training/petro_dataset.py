@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import torch
@@ -22,7 +23,7 @@ class PetroDataset(Dataset):
         self.num_features = self.pipeline_params["num_features"]
         self.transform_data_pipeline()
 
-    def transform_data_pipeline(self):
+    def transform_data_pipeline(self) -> None:
         """
         This is a custom method where will be implemented data transformations,
         the idea is to simply pass the crude data to the class and PetroDataset will take care od the test.
@@ -47,7 +48,7 @@ class PetroDataset(Dataset):
         This method is used to scale my train data in the pipeline,
         it also saves my scaler as a joblib/pickle so it can be used later.
         """
-        scaler_filename = "scaler_petro.joblib"
+        scaler_filename = os.path.join("ml_model_training", "scaler_petro.joblib")
         scaler = MinMaxScaler(feature_range=(-1, 1))
         self.data_scaled = scaler.fit_transform(self.data)
         dump(scaler, scaler_filename)
@@ -70,7 +71,7 @@ class PetroDataset(Dataset):
         """
         return len(self.data)
 
-    def __getitem__(self, idx) -> torch.Tensor:
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
         """
         Standard method from Dataset, where I am first retrieving my data as per index.
         After that I am transforming it into a Tensor so it can be consumed in LSTM

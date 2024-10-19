@@ -3,7 +3,9 @@ import torch.nn as nn
 
 
 class PetroModel(nn.Module):
-    def __init__(self, input_size, hidden_size, num_stacked_layers, device):
+    def __init__(
+        self, input_size: int, hidden_size: int, num_stacked_layers: int, device: str
+    ) -> None:
         super().__init__()
         ## Model Params
         self.hidden_size = hidden_size
@@ -16,7 +18,7 @@ class PetroModel(nn.Module):
         )
         self.fc = nn.Linear(hidden_size, 1)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         batch_size = x.size(0)
         h0 = torch.zeros(self.num_stacked_layers, batch_size, self.hidden_size).to(
             self.device

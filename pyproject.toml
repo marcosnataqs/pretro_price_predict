@@ -19,7 +19,12 @@ matplotlib = "^3.9.2"
 boto3 = "^1.35.44"
 python-dotenv = "^1.0.1"
 azure-storage-blob = "^12.23.1"
+yfinance = "^0.2.44"
+ipeadatapy = "^0.1.9"
 
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
 
 [build-system]
 requires = ["poetry-core"]
