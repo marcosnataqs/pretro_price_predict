@@ -11,6 +11,14 @@ joblib = "^1.4.2"
 numpy = "^2.1.1"
 litserve = "^0.2.2"
 streamlit = "^1.38.0"
+torch = "^2.5.0"
+torchvision = "^0.20.0"
+scikit-learn = "^1.5.2"
+pandas = "^2.2.3"
+matplotlib = "^3.9.2"
+boto3 = "^1.35.44"
+python-dotenv = "^1.0.1"
+azure-storage-blob = "^12.23.1"
 
 
 [build-system]
