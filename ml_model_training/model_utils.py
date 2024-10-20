@@ -6,11 +6,9 @@ import pandas as pd
 import neptune
 
 from dotenv import load_dotenv
-from neptune.types import File
 from torch.utils.data import DataLoader
 from petro_dataset import PetroDataset
 from petro_model import PetroModel
-from sklearn.model_selection import train_test_split
 
 load_dotenv()
 
@@ -76,3 +74,7 @@ def validate_one_epoch(
     neptune_run["validation/loss"].log(avg_loss_across_batches)
     print("*********************************************")
     print()
+
+def generate_loader(data:pd.DataFrame, pipeline_params:dict, batch_size:int, shuffle:bool = True) -> DataLoader:
+    dataset = PetroDataset(data, pipeline_params)
+    return DataLoader(dataset, batch_size, shuffle)
