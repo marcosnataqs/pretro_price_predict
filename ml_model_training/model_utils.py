@@ -9,14 +9,9 @@ from dotenv import load_dotenv
 from torch.utils.data import DataLoader
 from petro_dataset import PetroDataset
 from petro_model import PetroModel
+from neptune.metadata_containers.run import Run
 
 load_dotenv()
-
-neptune_run = neptune.init_run(
-    project=os.getenv("NEPTUNE_PROJECT"),
-    api_token=os.getenv("NEPTUNE_API_TOKEN"),
-)
-
 
 def train_one_epoch(
     epoch: int,
@@ -25,6 +20,7 @@ def train_one_epoch(
     loss_function: nn.MSELoss,
     optimizer: optim.Adam,
     device: str,
+    neptune_run: Run
 ) -> None:
     print(f"Training Epoch: {epoch+1}")
     model.train(True)
@@ -56,6 +52,7 @@ def validate_one_epoch(
     test_loader: DataLoader,
     device: str,
     loss_function: nn.MSELoss,
+    neptune_run: Run
 ) -> None:
     print(f"Validation Epoch: {epoch+1}")
     model.train(False)
