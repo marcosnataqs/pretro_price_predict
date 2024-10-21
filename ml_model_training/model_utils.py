@@ -13,12 +13,6 @@ from neptune.metadata_containers.run import Run
 
 load_dotenv()
 
-# neptune_run = neptune.init_run(
-#     project=os.getenv("NEPTUNE_PROJECT"),
-#     api_token=os.getenv("NEPTUNE_API_TOKEN"),
-# )
-
-
 def train_one_epoch(
     epoch: int,
     train_loader: DataLoader,
