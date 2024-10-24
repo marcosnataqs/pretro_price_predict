@@ -1,9 +1,7 @@
-import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import pandas as pd
-import neptune
 
 from dotenv import load_dotenv
 from torch.utils.data import DataLoader
@@ -13,6 +11,7 @@ from neptune.metadata_containers.run import Run
 
 load_dotenv()
 
+
 def train_one_epoch(
     epoch: int,
     train_loader: DataLoader,
@@ -20,7 +19,7 @@ def train_one_epoch(
     loss_function: nn.MSELoss,
     optimizer: optim.Adam,
     device: str,
-    neptune_run: Run
+    neptune_run: Run,
 ) -> None:
     print(f"Training Epoch: {epoch+1}")
     model.train(True)
@@ -52,7 +51,7 @@ def validate_one_epoch(
     test_loader: DataLoader,
     device: str,
     loss_function: nn.MSELoss,
-    neptune_run: Run
+    neptune_run: Run,
 ) -> None:
     print(f"Validation Epoch: {epoch+1}")
     model.train(False)
@@ -72,6 +71,9 @@ def validate_one_epoch(
     print("*********************************************")
     print()
 
-def generate_loader(data:pd.DataFrame, pipeline_params:dict, batch_size:int, shuffle:bool = True) -> DataLoader:
+
+def generate_loader(
+    data: pd.DataFrame, pipeline_params: dict, batch_size: int, shuffle: bool = True
+) -> DataLoader:
     dataset = PetroDataset(data, pipeline_params)
     return DataLoader(dataset, batch_size, shuffle)

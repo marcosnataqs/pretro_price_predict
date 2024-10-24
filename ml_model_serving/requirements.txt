@@ -1,3 +1,4 @@
 litserve
 joblib
-numpy
+pandas
+torch

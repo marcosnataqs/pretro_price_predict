@@ -8,16 +8,14 @@ import neptune
 from dotenv import load_dotenv
 from neptune.types import File
 from torch.utils.data import DataLoader
-from petro_dataset import PetroDataset
 from petro_model import PetroModel
 from sklearn.model_selection import train_test_split
 from neptune.metadata_containers.run import Run
-from model_utils import (train_one_epoch, 
-                         validate_one_epoch,
-                         generate_loader
-                         )
+
+from model_utils import train_one_epoch, validate_one_epoch, generate_loader
 
 load_dotenv()
+
 
 def main(
     num_epochs: int,
@@ -27,7 +25,7 @@ def main(
     loss_function: nn.MSELoss,
     optimizer: optim.Adam,
     device: str,
-    neptune_run: Run
+    neptune_run: Run,
 ) -> None:
     # Log hyperparameters
     neptune_run["hyperparameters"] = {
@@ -41,8 +39,12 @@ def main(
     neptune_run["model/summary"] = str(model)
 
     for epoch in range(num_epochs):
-        train_one_epoch(epoch, train_loader, model, loss_function, optimizer, device, neptune_run)
-        validate_one_epoch(epoch, model, test_loader, device, loss_function, neptune_run)
+        train_one_epoch(
+            epoch, train_loader, model, loss_function, optimizer, device, neptune_run
+        )
+        validate_one_epoch(
+            epoch, model, test_loader, device, loss_function, neptune_run
+        )
 
     # Save the final model
     torch.save(model.state_dict(), os.path.join("ml_model_training", "final_model.pth"))
@@ -80,4 +82,13 @@ if __name__ == "__main__":
     neptune_run["data/train_size"] = len(train)
     neptune_run["data/test_size"] = len(test)
 
-    main(num_epochs, train_loader, test_loader, model, loss_function, optimizer, device, neptune_run)
+    main(
+        num_epochs,
+        train_loader,
+        test_loader,
+        model,
+        loss_function,
+        optimizer,
+        device,
+        neptune_run,
+    )
