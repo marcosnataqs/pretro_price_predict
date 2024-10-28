@@ -59,6 +59,7 @@ def validate_one_epoch(
 
     for batch_index, batch in enumerate(test_loader):
         x_batch, y_batch = batch[0].to(device), batch[1].to(device)
+        print(x_batch.shape)
 
         with torch.no_grad():
             output = model(x_batch)
