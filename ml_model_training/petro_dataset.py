@@ -40,8 +40,8 @@ class PetroDataset(Dataset):
         for column in self.pipeline_params["columns"]:
             for i in range(1, self.pipeline_params["num_lags"] + 1):
                 self.data[f"{column}_(t-{i})"] = self.data[column].shift(i)
-                self.data.dropna(inplace=True)
             self.num_features += self.pipeline_params["num_lags"]
+        self.data.dropna(inplace=True)
 
     def scale_data(self) -> None:
         """
