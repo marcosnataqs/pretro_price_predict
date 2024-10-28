@@ -40,8 +40,10 @@ class PetroDataset(Dataset):
         for column in self.pipeline_params["columns"]:
             for i in range(1, self.pipeline_params["num_lags"] + 1):
                 self.data[f"{column}_(t-{i})"] = self.data[column].shift(i)
-                self.data.dropna(inplace=True)
             self.num_features += self.pipeline_params["num_lags"]
+        self.data.dropna(inplace=True)
+        # self.data.drop(columns=['adj_pbr','brent','wti','production','usd'])
+        # self.num_features -= 4
 
     def scale_data(self) -> None:
         """
@@ -59,8 +61,10 @@ class PetroDataset(Dataset):
         It also adjusts the dimensions of the numpy array so it matches the required dimensions for LSTM
         """
         X = np.flip(self.data_scaled[:, 1:], axis=1)
+        print(X)
         y = self.data_scaled[:, 0]
-        self.X = X.reshape((-1, (self.num_features), 1))
+        print(self.num_features)
+        self.X = X.reshape((-1, (self.num_features-1), 1))
         self.y = y.reshape((-1, 1))
         print(self.X.shape, self.y.shape)
         print(type(self.X), type(self.y))
@@ -86,9 +90,9 @@ class PetroDataset(Dataset):
 
 if __name__ == "__main__":
     data = pd.read_csv(
-        os.path.join("ml_model_training", "petro.csv"), index_col=0, parse_dates=True
+        os.path.join("ml_model_training", "petro_2.csv"), index_col=0, parse_dates=True
     ).sort_index()
-    params = {"num_lags": 7, "columns": ["pbr", "usd"], "num_features": 5}
+    params = {"num_lags": 7, "columns": ["pbr"], "num_features": 1}
     petrodata = PetroDataset(data, pipeline_params=params)
     data, target = petrodata[1]
     print(data, target)

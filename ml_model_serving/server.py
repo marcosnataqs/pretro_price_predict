@@ -6,6 +6,7 @@ import joblib
 import litserve as ls
 import torch
 import pandas as pd
+import numpy as np
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -43,19 +44,25 @@ class Petro_Predict_API(ls.LitAPI):
         # Convert input to DataFrame
         input_data = pd.DataFrame(
             [request["input"]],
-            columns=["pbr", "brent", "wti", "production", "usd"],
+            columns=["pbr_(t-7)", "pbr_(t-6)", "pbr_(t-5)", "pbr_(t-4)", "pbr_(t-3)", "pbr_(t-2)", "pbr_(t-1)"],
         )
+        X = self.scaler.fit_transform(input_data) 
+        X = X.reshape((-1, 7, 1))
+        X = torch.from_numpy(X.astype(np.float32))
 
-        # Create PetroDataset
-        dataset = PetroDataset(input_data, self.pipeline_params)
+        print(X)
+        print(X.shape)
+
+        # # Create PetroDataset
+        # dataset = PetroDataset(input_data, self.pipeline_params)
 
         # Get the processed input
-        x, _ = dataset[0]
+        # x, _ = input_data[0]
 
         # Add batch dimension and move to device
-        x = x.unsqueeze(0).to(self.device)
+        # x = x.unsqueeze(0).to(self.device)
 
-        return x
+        return X
 
     def predict(self, x):
         with torch.no_grad():
