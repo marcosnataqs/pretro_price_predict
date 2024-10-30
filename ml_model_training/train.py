@@ -68,7 +68,7 @@ if __name__ == "__main__":
     data = pd.read_csv(
         os.path.join("ml_model_training", "petro_2.csv"), index_col=0, parse_dates=True
     ).sort_index()
-    data = add_lags(data, 7, columns=['target'])
+    data = add_lags(data, 7, columns=['pbr'])
     pipeline_params = {"num_features": 7}
     device = "cuda" if torch.cuda.is_available() else "cpu"
     train, test = train_test_split(data, shuffle=False, test_size=0.2)
