@@ -9,11 +9,6 @@ import pandas as pd
 end_date = datetime.datetime.now().date()
 start_date = end_date - datetime.timedelta(days=20)
 ticker = ['PBR']
-scaler = joblib.load(
-            os.path.join("ml_model_training", "scaler_petro.joblib")
-        )
-
-#data = yf.download(tickers=ticker, start=star_date, end=end_date)['Close'].sort_index()
 
 def extract_yf_data(ticker: str, start_date, end_date) -> pd.DataFrame:
     df = yf.download(ticker, start=start_date, end=end_date, auto_adjust=True)
@@ -31,15 +26,6 @@ def get_data_to_predict():
 data = get_data_to_predict()
 print(data)
 
-# input_data2 = {
-#     "input": {
-#         "pbr": 10.5,
-#         "brent": 60.2,
-#         "wti": 58.7,
-#         "production": 2500000,
-#         "usd": 5.3,
-#     }
-# }
 
 input_data = {
     "input": {
