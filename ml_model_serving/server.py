@@ -75,8 +75,8 @@ class Petro_Predict_API(ls.LitAPI):
 
     def encode_response(self, output):
         # Inverse transform the output
-        #output_unscaled = self.output_scaler.inverse_transform(output)
-        output_unscaled = output
+        output_unscaled = self.output_scaler.inverse_transform(output)
+        #output_unscaled = output
         return {"prediction": float(output_unscaled[0][0])}
 
 

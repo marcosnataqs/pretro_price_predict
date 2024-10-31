@@ -68,7 +68,7 @@ class PetroDataset(Dataset):
 
         # self.data_scaled = scaler.fit_transform(self.data)
         dump(input_scaler, input_scaler_filename)
-        dump(input_scaler, output_scaler_filename)
+        dump(output_scaler, output_scaler_filename)
 
     def reshape_data(self) -> None:
         """
