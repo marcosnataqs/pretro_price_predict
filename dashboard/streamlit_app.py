@@ -36,7 +36,9 @@ def get_prediction(historical_prices):
 
     try:
         response = requests.post(
-            "https://pretro-price-predict.onrender.com/predict", json=input_data
+            "https://pretro-price-predict.onrender.com/predict",
+            json=input_data,
+            timeout=60,
         )
         if response.status_code == 200:
             return response.json()["prediction"]
@@ -96,10 +98,13 @@ with col4:
 
 with col5:
     # Display prediction metrics
-    pred_change = (
-        (prediction - pbr_data["Close"].iloc[-1]) / pbr_data["Close"].iloc[-1]
-    ) * 100
-    st.metric("Predicted Price", f"${prediction:.2f}", f"{pred_change:.2f}%")
+    if prediction:
+        pred_change = (
+            (prediction - pbr_data["Close"].iloc[-1]) / pbr_data["Close"].iloc[-1]
+        ) * 100
+        st.metric("Predicted Price", f"${prediction:.2f}", f"{pred_change:.2f}%")
+    else:
+        st.metric("Predicted Price", "N/A", "N/A")
 
 if prediction:
     st.subheader("Next Day Price Prediction")
