@@ -2,3 +2,5 @@ litserve
 joblib
 pandas
 torch
+numpy
+yfinance
