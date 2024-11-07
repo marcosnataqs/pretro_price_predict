@@ -36,7 +36,7 @@ def get_prediction(historical_prices):
 
     try:
         response = requests.post(
-            "https://pretro-price-predict.onrender.com/predict",
+            "https://petro-price-predict.onrender.com/predict",
             json=input_data,
             timeout=60,
         )
