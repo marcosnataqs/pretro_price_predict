@@ -1,4 +1,5 @@
 import os
+import sys
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -12,11 +13,13 @@ from petro_model import PetroModel
 from sklearn.model_selection import train_test_split
 from neptune.metadata_containers.run import Run
 
-##TO-DO: the add_lags function is duplicated because I was not able to correctly call from data_engineering
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from model_utils import train_one_epoch, validate_one_epoch, generate_loader, add_lags
+from data_engineering.data_utils import add_lags
+from model_utils import train_one_epoch, validate_one_epoch, generate_loader
 
 load_dotenv()
+
 
 def main(
     num_epochs: int,
@@ -58,7 +61,6 @@ def main(
 
 
 if __name__ == "__main__":
-    
     # Initialize Neptune run
     neptune_run = neptune.init_run(
         project=os.getenv("NEPTUNE_PROJECT"),
@@ -68,7 +70,7 @@ if __name__ == "__main__":
     data = pd.read_csv(
         os.path.join("ml_model_training", "petro_2.csv"), index_col=0, parse_dates=True
     ).sort_index()
-    data = add_lags(data, 7, columns=['pbr'])
+    data = add_lags(data, 7, columns=["pbr"])
     pipeline_params = {"num_features": 7}
     device = "cuda" if torch.cuda.is_available() else "cpu"
     train, test = train_test_split(data, shuffle=False, test_size=0.2)

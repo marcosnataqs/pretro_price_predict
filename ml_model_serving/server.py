@@ -15,6 +15,9 @@ from ml_model_training import PetroModel
 
 class Petro_Predict_API(ls.LitAPI):
     def setup(self, device):
+        # Set device to CPU
+        device = torch.device("cpu")
+
         # Load the scaler
         self.input_scaler = joblib.load(
             os.path.join("ml_model_training", "input_scaler_petro.joblib")

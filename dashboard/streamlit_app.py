@@ -64,7 +64,7 @@ wti_data = get_stock_data("CL=F", start_date, end_date)
 usd_data = get_stock_data("USDBRL=X", start_date, end_date)
 
 # Get prediction directly
-historical_prices = pbr_data["Close"].iloc[-7:].tolist()
+historical_prices = pbr_data["Close"].tail(7).tolist()
 prediction = get_prediction(historical_prices)
 
 # Display current prices
