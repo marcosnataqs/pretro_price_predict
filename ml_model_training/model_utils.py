@@ -75,6 +75,7 @@ def generate_loader(
     data: pd.DataFrame, pipeline_params: dict, batch_size: int, shuffle: bool = True
 ) -> DataLoader:
     dataset = PetroDataset(data, pipeline_params)
+    dataset()
     return DataLoader(dataset, batch_size, shuffle)
 
 def add_lags(data:pd.DataFrame, num_lags:int, columns:list) -> pd.DataFrame:

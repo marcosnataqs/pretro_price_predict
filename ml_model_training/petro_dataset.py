@@ -21,30 +21,15 @@ class PetroDataset(Dataset):
         self.pipeline_params = pipeline_params
         self.data = data
         self.num_features = self.pipeline_params["num_features"]
-        self.transform_data_pipeline()
 
-    def transform_data_pipeline(self) -> None:
+    def __call__(self) -> None:
         """
-        This is a custom method where will be implemented data transformations,
-        the idea is to simply pass the crude data to the class and PetroDataset will take care od the test.
+        This callable triggers the data pipeline to correctly split the data into X and targets and also return the tensors
         """
-        # self.add_lags()
         self.split_data()
         self.scale_data()
         self.reshape_data()
 
-    # def add_lags(self) -> None:
-    #     """
-    #     This method will use the pipeline parameters to generate the lags for the columns I chose.
-    #     This means that I can interate each every column I want and set a number or lags that I may use in my model later.
-    #     """
-    #     for column in self.pipeline_params["columns"]:
-    #         for i in range(1, self.pipeline_params["num_lags"] + 1):
-    #             self.data[f"{column}_(t-{i})"] = self.data[column].shift(i)
-    #         self.num_features += self.pipeline_params["num_lags"]
-    #     self.data.dropna(inplace=True)
-    #     # self.data.drop(columns=['adj_pbr','brent','wti','production','usd'])
-    #     # self.num_features -= 4
 
     def split_data(self) -> None:
         self.input_data = self.data.drop(columns='pbr', axis=1)
@@ -110,5 +95,6 @@ if __name__ == "__main__":
     data = add_lags(data, 7, columns=['pbr'])
     params = {"num_features": 7}
     petrodata = PetroDataset(data, pipeline_params=params)
+    petrodata()
     data, target = petrodata[1]
     print(data, target)
