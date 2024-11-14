@@ -51,7 +51,7 @@ class Petro_Predict_API(ls.LitAPI):
     def decode_request(self, request):
         # Convert input to DataFrame
         input_data = pd.DataFrame(
-            [request["input"]],
+            request["input"],
             columns=[
                 "pbr_(t-7)",
                 "pbr_(t-6)",
