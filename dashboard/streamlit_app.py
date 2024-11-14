@@ -23,15 +23,15 @@ def get_stock_data(ticker, start_date, end_date):
 # Function to get prediction from API
 def get_prediction(historical_prices):
     input_data = {
-        "input": [
-            historical_prices[-7],
-            historical_prices[-6],
-            historical_prices[-5],
-            historical_prices[-4],
-            historical_prices[-3],
-            historical_prices[-2],
-            historical_prices[-1],
-        ]
+        "input": {
+            "pbr_(t-7)": historical_prices[-7],
+            "pbr_(t-6)": historical_prices[-6],
+            "pbr_(t-5)": historical_prices[-5],
+            "pbr_(t-4)": historical_prices[-4],
+            "pbr_(t-3)": historical_prices[-3],
+            "pbr_(t-2)": historical_prices[-2],
+            "pbr_(t-1)": historical_prices[-1],
+        }
     }
 
     try:
@@ -43,7 +43,7 @@ def get_prediction(historical_prices):
         if response.status_code == 200:
             return response.json()["prediction"]
         else:
-            st.error(f"Error getting prediction from API: {response}")
+            st.error(f"Error getting prediction from API: {response.status_code}")
             return None
     except Exception as e:
         st.error(f"Error connecting to API: {str(e)}")
