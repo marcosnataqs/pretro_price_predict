@@ -17,6 +17,7 @@ st.title("🇧🇷🛢️ Petrobras Price Prediction")
 # Function to get historical data
 def get_stock_data(ticker, start_date, end_date):
     df = yf.download(ticker, start=start_date, end=end_date)
+    df.columns = df.columns.droplevel(1)
     return df
 
 
@@ -24,13 +25,13 @@ def get_stock_data(ticker, start_date, end_date):
 def get_prediction(historical_prices):
     input_data = {
         "input": {
-            "pbr_(t-7)": historical_prices[-7][0],
-            "pbr_(t-6)": historical_prices[-6][0],
-            "pbr_(t-5)": historical_prices[-5][0],
-            "pbr_(t-4)": historical_prices[-4][0],
-            "pbr_(t-3)": historical_prices[-3][0],
-            "pbr_(t-2)": historical_prices[-2][0],
-            "pbr_(t-1)": historical_prices[-1][0],
+            "pbr_(t-7)": historical_prices[-7],
+            "pbr_(t-6)": historical_prices[-6],
+            "pbr_(t-5)": historical_prices[-5],
+            "pbr_(t-4)": historical_prices[-4],
+            "pbr_(t-3)": historical_prices[-3],
+            "pbr_(t-2)": historical_prices[-2],
+            "pbr_(t-1)": historical_prices[-1],
         }
     }
 
@@ -59,6 +60,7 @@ col1, col2, col3, col4, col5 = st.columns(5)
 
 # Get data for each asset
 pbr_data = get_stock_data("PBR", start_date, end_date)
+print(pbr_data.head())
 brent_data = get_stock_data("BZ=F", start_date, end_date)
 wti_data = get_stock_data("CL=F", start_date, end_date)
 usd_data = get_stock_data("USDBRL=X", start_date, end_date)
@@ -102,8 +104,6 @@ with col5:
         pred_change = (
             (prediction - pbr_data["Close"].iloc[-1]) / pbr_data["Close"].iloc[-1]
         ) * 100
-        print(type(pred_change))
-        print(pred_change)
         st.metric("Predicted Price", f"${prediction:.2f}", f"{pred_change:.2f}%")
     else:
         st.metric("Predicted Price", "N/A", "N/A")
