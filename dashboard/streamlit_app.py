@@ -17,6 +17,7 @@ st.title("🇧🇷🛢️ Petrobras Price Prediction")
 # Function to get historical data
 def get_stock_data(ticker, start_date, end_date):
     df = yf.download(ticker, start=start_date, end=end_date)
+    df.columns = df.columns.droplevel(1)
     return df
 
 
@@ -59,6 +60,7 @@ col1, col2, col3, col4, col5 = st.columns(5)
 
 # Get data for each asset
 pbr_data = get_stock_data("PBR", start_date, end_date)
+print(pbr_data.head())
 brent_data = get_stock_data("BZ=F", start_date, end_date)
 wti_data = get_stock_data("CL=F", start_date, end_date)
 usd_data = get_stock_data("USDBRL=X", start_date, end_date)
