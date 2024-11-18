@@ -15,7 +15,7 @@ from neptune.metadata_containers.run import Run
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from data_engineering.data_utils import add_lags
+from data_engineering.data_utils import add_lags, download_data
 from model_utils import train_one_epoch, validate_one_epoch, generate_loader
 
 load_dotenv()
@@ -67,9 +67,7 @@ if __name__ == "__main__":
         api_token=os.getenv("NEPTUNE_API_TOKEN"),
     )
 
-    data = pd.read_csv(
-        os.path.join("ml_model_training", "petro_2.csv"), index_col=0, parse_dates=True
-    ).sort_index()
+    data = download_data().sort_index() ## TODO Adjust environment variable for Lake consumption
     data = add_lags(data, 7, columns=["pbr"])
     pipeline_params = {"num_features": 7}
     device = "cuda" if torch.cuda.is_available() else "cpu"

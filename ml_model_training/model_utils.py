@@ -24,6 +24,7 @@ def train_one_epoch(
     print(f"Training Epoch: {epoch+1}")
     model.train(True)
     running_loss = 0.0
+    avg_loss = 0.0
 
     for batch_index, batch in enumerate(train_loader):
         x_batch, y_batch = batch[0].to(device), batch[1].to(device)
@@ -43,6 +44,7 @@ def train_one_epoch(
 
     neptune_run["train/epoch"].log(epoch + 1)
     print()
+    return avg_loss
 
 
 def validate_one_epoch(
@@ -65,10 +67,12 @@ def validate_one_epoch(
             running_loss += loss.item()
 
     avg_loss_across_batches = running_loss / len(test_loader)
+    #yield avg_loss_across_batches
     print(f"Validation Loss: {avg_loss_across_batches}")
     neptune_run["validation/loss"].log(avg_loss_across_batches)
     print("*********************************************")
     print()
+    return avg_loss_across_batches
 
 
 def generate_loader(
