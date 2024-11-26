@@ -29,11 +29,12 @@ neptune_run = neptune.init_run(
 # Space to search
 search_space = {
     'learning_rate': hp.loguniform('learning_rate', -4, -1),
-    #'hidden_size': hp.choice('hidden_size', [16, 32, 64]), # maior pode aumentar o risco de overfitting
-    'num_stacked_layers': hp.choice('num_stacked_layers', [1]), # quanto maior, mais dificil de treinar e suscetiveis a problemas de gradiente
-    #'dropout': hp.uniform('dropout', 0.1, 0.5),
+    'hidden_size': hp.choice('hidden_size', [3, 4, 5, 6, 7]), # maior pode aumentar o risco de overfitting
+    'num_stacked_layers': hp.choice('num_stacked_layers', [1,2,3,4]), # quanto maior, mais dificil de treinar e suscetiveis a problemas de gradiente
+    'dropout': hp.uniform('dropout', 0.1, 0.5),
     'batch_size': hp.choice('batch_size', [16, 32, 64, 128]), # menor mais ruido
-    'epochs': hp.uniform('epochs', 10, 100)
+    'epochs': hp.uniform('epochs', 10, 100),
+    'activation_function':hp.choice('activation_function', [nn.Sigmoid(), nn.ReLU(inplace=True), nn.ReLU(inplace=True), nn.Tanh()] ) 
 }
 
 def objective(params):
@@ -43,11 +44,13 @@ def objective(params):
         params['dropout'] = 0.0
     # Unpack parameters
     learning_rate = params['learning_rate']
-    # hidden_size = int(params['hidden_size'])
+    hidden_size = int(params['hidden_size'])
     num_stacked_layers = int(params['num_stacked_layers'])
-    # dropout = params['dropout']
+    dropout = params['dropout']
     batch_size = int(params['batch_size'])
     epochs = int(params['epochs'])
+    # activation
+    activation_function = params['activation_function']
 
     # Prepare Data
     data = download_data().sort_index()
@@ -63,9 +66,17 @@ def objective(params):
     neptune_run["data/test_size"] = len(test)
 
     # Model, criterion, optimizer
+    # model = PetroModel(
+    #     input_size=1, hidden_size=7, num_stacked_layers=num_stacked_layers, 
+    #     device=device).to(device)
+
+    # model = PetroModel(
+    #     input_size=1, hidden_size=7, num_stacked_layers=num_stacked_layers, 
+    #     device=device, activation = activation_function).to(device)
+
     model = PetroModel(
-        input_size=1, hidden_size=7, num_stacked_layers=num_stacked_layers, 
-        device=device).to(device)
+        input_size=1, hidden_size=hidden_size, num_stacked_layers=num_stacked_layers, 
+        device=device, dropout = dropout, activation=activation_function).to(device)
     loss_function = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
@@ -113,7 +124,7 @@ best = fmin(
     fn=objective,                # Objective function to minimize
     space=search_space,          # Search space for hyperparameters
     algo=tpe.suggest,            # Tree of Parzen Estimators (TPE) algorithm for optimization
-    max_evals=10,                # Number of evaluations to run
+    max_evals=50,                # Number of evaluations to run
     trials=trials                # Track results
 )
 
