@@ -72,12 +72,12 @@ if __name__ == "__main__":
     pipeline_params = {"num_features": 7}
     device = "cuda" if torch.cuda.is_available() else "cpu"
     train, test = train_test_split(data, shuffle=False, test_size=0.2)
-    batch_size = 16
+    batch_size = 64
     train_loader = generate_loader(train, pipeline_params, batch_size)
     test_loader = generate_loader(test, pipeline_params, batch_size, shuffle=False)
-    model = PetroModel(1, 7, 1, device).to(device)
-    learning_rate = 0.001
-    num_epochs = 10
+    model = PetroModel(1, 7, num_stacked_layers=1, dropout=0.0, activation=nn.Tanh(), device=device).to(device)
+    learning_rate = 0.055471079560288315
+    num_epochs = 75
     loss_function = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 

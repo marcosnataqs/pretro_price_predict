@@ -65,8 +65,8 @@ class PetroDataset(Dataset):
         y = self.output_data
         self.X = X.reshape((-1, (self.num_features), 1))
         self.y = y.reshape((-1, 1))
-        print(self.X.shape, self.y.shape)
-        print(type(self.X), type(self.y))
+        # print(self.X.shape, self.y.shape)
+        # print(type(self.X), type(self.y))
 
     def __len__(self) -> int:
         """
