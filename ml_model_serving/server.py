@@ -4,19 +4,33 @@ import os
 import sys
 import joblib
 import litserve as ls
+import psutil
 import torch
+import torch.nn as nn
+import time
 import pandas as pd
 import numpy as np
+from datetime import datetime, timezone
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ml_model_training import PetroModel
+from utils.logger import upload_metrics_to_dl
 
 
 class Petro_Predict_API(ls.LitAPI):
     def setup(self, device):
         # Set device to CPU
         device = torch.device("cpu")
+
+        self.metrics = {
+            "date_time": str,
+            "cpu_usage": 0,
+            "memory_usage": 0,
+            "response_times": 0,
+            "input_data": 0,
+            "output": 0
+        }
 
         # Load the scaler
         self.input_scaler = joblib.load(
@@ -28,7 +42,7 @@ class Petro_Predict_API(ls.LitAPI):
         )
 
         # Load the LSTM model
-        self.model = PetroModel(1, 7, 1, device)
+        self.model = PetroModel(1, 7, num_stacked_layers=1, dropout=0.0, activation=nn.Tanh(), device=device).to(device)
         self.model.load_state_dict(
             torch.load(
                 os.path.join("ml_model_training", "final_model.pth"),
@@ -48,6 +62,11 @@ class Petro_Predict_API(ls.LitAPI):
         #     "num_features": 5,
         # }
 
+
+    def monitor_resources(self):
+        self.metrics["cpu_usage"] = psutil.cpu_percent()
+        self.metrics["memory_usage"] = psutil.virtual_memory().percent
+
     def decode_request(self, request):
         # Convert input to DataFrame
         input_data = pd.DataFrame(
@@ -62,6 +81,9 @@ class Petro_Predict_API(ls.LitAPI):
                 "pbr_(t-1)",
             ],
         )
+
+        self.metrics["input_data"] = input_data.to_json()
+
         X = self.input_scaler.transform(input_data)
         X = X.reshape((-1, 7, 1))
         X = torch.from_numpy(X.astype(np.float32))
@@ -81,13 +103,36 @@ class Petro_Predict_API(ls.LitAPI):
         return X
 
     def predict(self, x):
+        
+        # Log date and time
+        self.metrics["date_time"] = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H-%M-%S")
+
+        # Measure response time
+        start_time = time.time()
+
+        # Run the model
         with torch.no_grad():
             output = self.model(x)
+        
+        # Log response time
+        response_time = time.time() - start_time
+        self.metrics["response_times"] = response_time
+
+        # Get monitor resources
+        self.monitor_resources()
+
         return output.cpu().numpy()
 
     def encode_response(self, output):
         # Inverse transform the output
         output_unscaled = self.output_scaler.inverse_transform(output)
+
+        # Log output
+        self.metrics["output"] = float(output_unscaled[0][0])
+
+        # Upload metrics to DL
+        upload_metrics_to_dl(self.metrics)
+
         # output_unscaled = output
         return {"prediction": float(output_unscaled[0][0])}
 
