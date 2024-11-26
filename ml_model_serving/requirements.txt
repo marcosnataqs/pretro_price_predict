@@ -4,3 +4,4 @@ pandas
 torch
 numpy
 yfinance
+psutil
