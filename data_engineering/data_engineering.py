@@ -57,7 +57,7 @@ class DataIngestionPipeline:
         """
         Reindex and resample data.
         """
-        new_index = pd.date_range(start=self.start_date, end=self.end_date, freq='D')
+        new_index = pd.date_range(start=self.start_date.date(), end=self.end_date.date(), freq='D')
         self.data = self.data.reindex(new_index)
         self.data.index = self.data.index.date
         self.data.index.name = 'Date'
